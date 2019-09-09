@@ -30,11 +30,9 @@ export default class CreateTask extends Component {
       this.setState({ currentInput: ++copyState.currentInput });
       nextInput(inputs);
 
-      this.setState((state, props) => {
-        return {
-          state: copyState
-        }
-      });
+      this.setState((state, props) => copyState);
+
+      console.log(this.state);
     }
 
     if (copyState.currentInput === 2) {
@@ -57,11 +55,7 @@ export default class CreateTask extends Component {
         nextInput(inputs);
       }
 
-      this.setState((state, props) => {
-        return {
-          state: copyState
-        }
-      });
+      this.setState((state, props) => copyState);
     }
   }
 

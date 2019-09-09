@@ -3,20 +3,24 @@ import history from '../helpers/history'
 import styled from 'styled-components'
 import Task from '../components/Task'
 import { connect } from 'react-redux'
+import { setPomidoro } from '../actions/timerAction'
+
 
 class PageTasks extends Component {
   render() {
-    const { tasks } = this.props;
-    console.log(tasks);
+    const { tasks, setPomidoroAction } = this.props;
     return (
       <PageTasksWrapper>
         {tasks.map((task, index) =>
           <Task
             key={index}
+            index={index}
             name={task.name}
             date={task.date}
             time={task.time}
             description={task.description}
+            countPomidoro={task.countPomidoro}
+            setPomidoro={setPomidoroAction}
           />
         )}
         <PageTaskNavigation>
@@ -29,10 +33,17 @@ class PageTasks extends Component {
 }
 
 const mapStateToProps = store => ({
-  tasks: store.task.task
+  tasks: store.task
 });
 
-export default connect(mapStateToProps)(PageTasks);
+const mapDispatchToProps = dispatch => ({
+  setPomidoroAction: (index, count) => dispatch(setPomidoro(index, count))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PageTasks);
 
 const PageTasksWrapper = styled.div`
   display: flex;

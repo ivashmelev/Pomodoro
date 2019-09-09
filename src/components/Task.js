@@ -4,16 +4,72 @@ import PomidoroImg from '../assets/img/tomato.svg'
 import PomidoroTimerStartImg from '../assets/img/play-button.svg'
 import PomidoroTimerPauseImg from '../assets/img/pause.svg'
 
+
 export default class Task extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      statusTimer: 'pause'
+      statusTimer: 'pause',
+      minut: 25,
+      second: 0,
     }
   }
+
+  startTimer() {
+    const copyState = { ...this.state };
+    copyState.statusTimer = 'play';
+    let rest = true;
+    let cickle = 0;
+
+    const handlerTimer = () => {
+      if (copyState.second === 0) {
+        copyState.second = 60;
+        copyState.minut -= 1;
+      }
+
+      if (copyState.minut === 0 && copyState.second === 1 && !rest) {
+        copyState.minut = 25;
+        copyState.second = 0;
+        rest = true;
+        cickle += 1;
+      }
+
+      if (copyState.minut === 0 && copyState.second === 1 && rest) {
+        rest = false;
+        copyState.minut = 5;
+        copyState.second = 0;
+        console.log('Pomidorko!');
+        console.log(this.props.index, 'index');
+        this.props.setPomidoro(this.props.index, this.props.countPomidoro + 1);
+      }
+
+      if (cickle === 4) {
+        copyState.minut = 15;
+        copyState.second = 0;
+        cickle = 0;
+        rest = false;
+        console.log('Big rest!');
+      }
+
+      copyState.second -= 1;
+
+
+      this.setState((state, props) => copyState);
+
+
+      const stopTimer = () => {
+        clearInterval(timer);
+      }
+    }
+
+    const timer = setInterval(handlerTimer, 1000)
+  }
+
+
+
   render() {
-    const { name, date, time, description } = this.props;
-    const { statusTimer } = this.state;
+    const { name, date, time, description, countPomidoro } = this.props;
+    const { statusTimer, minut, second } = this.state;
     const [weekDay, month, day, year] = date.toString().split(' ');
     return (
       <TaskWrapper>
@@ -30,6 +86,12 @@ export default class Task extends Component {
           <TaskWeekDay>{weekDay}</TaskWeekDay>
         </TaskHeaderWrapper>
         <TaskMiddleWrapper>
+          {statusTimer === 'play' ?
+            <TaskTimerWrapper>
+              <TaskTimer>{String(minut).length === 1 ? `0${minut}` : minut} : {String(second).length === 1 ? `0${second}` : second}</TaskTimer>
+            </TaskTimerWrapper>
+            : null
+          }
           <TaskNameTimeWrapper>
             <TaskName>{name}</TaskName>
             <TaskTime>{time}</TaskTime>
@@ -42,17 +104,17 @@ export default class Task extends Component {
         <TaskFooterWrapper>
           <TaskPomidoroImgNumberWrapper>
             <TaskPomidoroImg src={PomidoroImg} />
-            <TaskPomidoroNumber> x 4</TaskPomidoroNumber>
+            <TaskPomidoroNumber> x {countPomidoro}</TaskPomidoroNumber>
           </TaskPomidoroImgNumberWrapper>
           <TaskPomidoroTimerWrapper>
             {statusTimer === 'pause' ?
-              <TaskPomidoroTimerImg src={PomidoroTimerStartImg} onClick={() => this.setState({ statusTimer: 'play' })} /> :
+              <TaskPomidoroTimerImg src={PomidoroTimerStartImg} onClick={() => this.startTimer()} /> :
               statusTimer === 'play' ?
                 <TaskPomidoroTimerImg src={PomidoroTimerPauseImg} onClick={() => this.setState({ statusTimer: 'pause' })} /> : null
             }
           </TaskPomidoroTimerWrapper>
         </TaskFooterWrapper>
-      </TaskWrapper>
+      </TaskWrapper >
     )
   }
 }
@@ -181,4 +243,20 @@ const TaskPomidoroTimerWrapper = styled.div`
 
 const TaskPomidoroTimerImg = styled.img`
   width: 33px;
+`;
+
+const TaskTimerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  top: -60px;
+  height: 0px;
+  position: relative;
+`;
+
+const TaskTimer = styled.div`
+  font-size: 40px;
+  line-height: 34px;
+  font-family: Roboto Bold;
+  position: relative;
 `;
