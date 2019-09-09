@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Route, Router, Switch } from 'react-router-dom'
 import history from '../helpers/history'
 import App from './App';
+import CreateTask from '../components/CreateTask'
+import PageTasks from './PageTasks'
 
 
 const wrap = Component => {
@@ -16,7 +18,8 @@ const Routing = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route exact path='/' render={() => wrap(App)} />
+        <Route exact path='/' render={() => wrap(CreateTask)} />
+        <Route exact path='/tasks' render={() => wrap(PageTasks)} />
       </Switch>
     </Router>
   )
