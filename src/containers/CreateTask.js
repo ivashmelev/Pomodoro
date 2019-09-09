@@ -2,14 +2,17 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import Calendar from 'react-calendar'
 import history from '../helpers/history'
+import { connect } from 'react-redux'
+import { addTask } from '../actions/taskAction'
 
 
-export default class CreateTask extends Component {
+class CreateTask extends Component {
   constructor(props) {
     super(props);
     this.state = {
       currentInput: 1,
-      inputValues: []
+      inputValues: [],
+      task: {}
     }
   }
 
@@ -52,13 +55,29 @@ export default class CreateTask extends Component {
       } else {
         this.setState({ currentInput: ++copyState.currentInput });
         copyState.inputValues.push(e.target.value);
+        [
+          copyState.task.name,
+          copyState.task.date,
+          copyState.task.time,
+          copyState.task.description
+        ] = [...copyState.inputValues];
+
+        const { weekDay, month, day, year } = { ...copyState.task.date };
+        copyState.task.date = `${weekDay} ${month} ${day} ${year}`;
+        copyState.task.countPomidoro = 0;
+
+        this.props.addTask(copyState.task);
         nextInput(inputs);
+
       }
+
+
+
+      console.log(copyState);
 
       this.setState((state, props) => copyState);
     }
   }
-
 
   render() {
     const { currentInput, inputValues } = this.state;
@@ -102,6 +121,16 @@ export default class CreateTask extends Component {
     )
   }
 }
+
+const mapStateToProps = store => ({
+
+});
+
+const mapDispatchToProps = dispatch => ({
+  addTask: task => dispatch(addTask(task))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateTask);
 
 
 const CreateTaskWrapper = styled.div`

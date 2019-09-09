@@ -5,6 +5,13 @@ const initialState = [
     time: '12:40',
     description: 'Description of Task',
     countPomidoro: 1
+  },
+  {
+    name: 'Name of Task #1',
+    date: 'Fri Sep 13 2019',
+    time: '12:40',
+    description: 'Description of Task',
+    countPomidoro: 1
   }
 ]
 
@@ -17,6 +24,9 @@ export const taskReducer = (state = initialState, action) => {
       console.log(state);
       console.log(copyState);
       return copyState;
+
+    case 'ADD_TASK':
+      return [...state, action.payload];
 
     default:
       return state

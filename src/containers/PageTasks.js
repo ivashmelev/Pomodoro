@@ -11,18 +11,20 @@ class PageTasks extends Component {
     const { tasks, setPomidoroAction } = this.props;
     return (
       <PageTasksWrapper>
-        {tasks.map((task, index) =>
-          <Task
-            key={index}
-            index={index}
-            name={task.name}
-            date={task.date}
-            time={task.time}
-            description={task.description}
-            countPomidoro={task.countPomidoro}
-            setPomidoro={setPomidoroAction}
-          />
-        )}
+        <TaskWrapper>
+          {tasks.map((task, index) =>
+            <Task
+              key={index}
+              index={index}
+              name={task.name}
+              date={task.date}
+              time={task.time}
+              description={task.description}
+              countPomidoro={task.countPomidoro}
+              setPomidoro={setPomidoro}
+            />
+          )}
+        </TaskWrapper>
         <PageTaskNavigation>
           <PageTaskLink onClick={() => history.push({ pathname: '/' })}>New Task</PageTaskLink>
           <PageTaskLink>About</PageTaskLink>
@@ -37,7 +39,7 @@ const mapStateToProps = store => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setPomidoroAction: (index, count) => dispatch(setPomidoro(index, count))
+  setPomidoro: (index, count) => dispatch(setPomidoro(index, count))
 });
 
 export default connect(
@@ -49,9 +51,15 @@ const PageTasksWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  flex-wrap: wrap;
   flex-direction: column;
+`;
+
+const TaskWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 `;
 
 const PageTaskNavigation = styled.div`

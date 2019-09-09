@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Route, Router, Switch } from 'react-router-dom'
 import history from '../helpers/history'
 import App from './App';
-import CreateTask from '../components/CreateTask'
+import CreateTask from './CreateTask'
 import PageTasks from './PageTasks'
 
 
