@@ -4,6 +4,7 @@ import Calendar from 'react-calendar'
 import history from '../helpers/history'
 import { connect } from 'react-redux'
 import { addTask } from '../actions/taskAction'
+import { response } from '../helpers/responsive'
 
 
 class CreateTask extends Component {
@@ -42,41 +43,80 @@ class CreateTask extends Component {
       saveCalendar(e);
     }
 
-    if (e.keyCode === 13 && e.ctrlKey) {
+    if (window.innerHeight < 1000) {
+      if (e.keyCode === 13) {
 
-      if (copyState.currentInput !== 4) {
-        copyState.inputValues.push(e.target.value);
-        this.setState({ currentInput: ++copyState.currentInput });
-        nextInput(inputs);
+        if (copyState.currentInput !== 4) {
+          copyState.inputValues.push(e.target.value);
+          this.setState({ currentInput: ++copyState.currentInput });
+          nextInput(inputs);
 
-        if (copyState.currentInput <= 2) {
-          inputs[copyState.currentInput - 1].focus();
+          if (copyState.currentInput <= 2) {
+            inputs[copyState.currentInput - 1].focus();
+          }
+        } else {
+          this.setState({ currentInput: ++copyState.currentInput });
+          copyState.inputValues.push(e.target.value);
+          [
+            copyState.task.name,
+            copyState.task.date,
+            copyState.task.time,
+            copyState.task.description
+          ] = [...copyState.inputValues];
+
+          const { weekDay, month, day, year } = { ...copyState.task.date };
+          copyState.task.date = `${weekDay} ${month} ${day} ${year}`;
+          copyState.task.countPomidoro = 0;
+
+          this.props.addTask(copyState.task);
+          nextInput(inputs);
+
         }
-      } else {
-        this.setState({ currentInput: ++copyState.currentInput });
-        copyState.inputValues.push(e.target.value);
-        [
-          copyState.task.name,
-          copyState.task.date,
-          copyState.task.time,
-          copyState.task.description
-        ] = [...copyState.inputValues];
 
-        const { weekDay, month, day, year } = { ...copyState.task.date };
-        copyState.task.date = `${weekDay} ${month} ${day} ${year}`;
-        copyState.task.countPomidoro = 0;
 
-        this.props.addTask(copyState.task);
-        nextInput(inputs);
 
+        console.log(copyState);
+
+        this.setState((state, props) => copyState);
       }
+    } else {
+      if (e.keyCode === 13 && e.ctrlKey) {
+
+        if (copyState.currentInput !== 4) {
+          copyState.inputValues.push(e.target.value);
+          this.setState({ currentInput: ++copyState.currentInput });
+          nextInput(inputs);
+
+          if (copyState.currentInput <= 2) {
+            inputs[copyState.currentInput - 1].focus();
+          }
+        } else {
+          this.setState({ currentInput: ++copyState.currentInput });
+          copyState.inputValues.push(e.target.value);
+          [
+            copyState.task.name,
+            copyState.task.date,
+            copyState.task.time,
+            copyState.task.description
+          ] = [...copyState.inputValues];
+
+          const { weekDay, month, day, year } = { ...copyState.task.date };
+          copyState.task.date = `${weekDay} ${month} ${day} ${year}`;
+          copyState.task.countPomidoro = 0;
+
+          this.props.addTask(copyState.task);
+          nextInput(inputs);
+
+        }
 
 
 
-      console.log(copyState);
+        console.log(copyState);
 
-      this.setState((state, props) => copyState);
+        this.setState((state, props) => copyState);
+      }
     }
+
   }
 
   render() {
@@ -139,6 +179,9 @@ const CreateTaskWrapper = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
+  @media ${response.mobile} {
+    padding: 20px;
+  }
 `;
 
 const CreateTaskBlock = styled.div`
@@ -147,7 +190,9 @@ const CreateTaskBlock = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  width: 600px;
+  max-width: 600px;
+  width: 100%;
+  
 `;
 
 const CreateTaskInputWrapper = styled.div`
@@ -192,6 +237,12 @@ const CreateTaskInputWrapper = styled.div`
     animation-duration: 1s;
     animation-name: move-help;
     animation-fill-mode: forwards;
+  }
+
+  @media (max-width: 1000px) {
+    :before{
+      display: none;
+    }
   }
 `;
 

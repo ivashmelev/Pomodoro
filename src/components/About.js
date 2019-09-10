@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import history from '../helpers/history'
 import AboutImg from '../assets/img/about.svg'
+import { response } from '../helpers/responsive'
+
 
 export default class About extends Component {
   render() {
@@ -24,7 +26,8 @@ const AboutWrapper = styled.div`
 `;
 
 const AboutInfo = styled.img`
-  width: 600px;
+  max-width: 600px;
+  width: 100%;
 `;
 
 const AboutBack = styled.p`

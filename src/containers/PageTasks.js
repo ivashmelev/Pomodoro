@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { setPomidoro } from '../actions/timerAction'
 import { deleteTask } from '../actions/taskAction'
 import { editTask } from '../actions/taskAction'
+import { response } from '../helpers/responsive'
 
 
 class PageTasks extends Component {
@@ -88,6 +89,10 @@ const PageTaskNavigation = styled.div`
   display: flex;
   justify-content: space-between;
   width: 50%;
+
+  @media ${response.mobileS} {
+    align-items: center;
+  }
 `;
 
 const PageTaskLink = styled.a`

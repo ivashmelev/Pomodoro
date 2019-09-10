@@ -7,6 +7,7 @@ import EditButtonImg from '../assets/img/edit.svg'
 import CheckedImg from '../assets/img/check-mark.svg'
 import Calendar from 'react-calendar'
 import EditOkImg from '../assets/img/diploma.svg'
+import { response } from '../helpers/responsive'
 
 
 export default class Task extends Component {
@@ -221,6 +222,10 @@ const TaskWrapper = styled.div`
   :hover{
     cursor: pointer;
   }
+
+  @media ${response.mobile} {
+    margin-left: 0; 
+  }
   
 `;
 
@@ -322,6 +327,10 @@ const TaskEditButtonWrapper = styled.div`
   position: relative;
   top: -60px;
   left: 180px;
+
+  @media ${response.mobile} {
+    width: 10px;
+  }
 `;
 
 const TaskEditButton = styled.img`
