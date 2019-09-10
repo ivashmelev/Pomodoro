@@ -19,7 +19,8 @@ export default class Task extends Component {
       timer: '',
       checked: false,
       edit: false,
-      editDate: false
+      editDate: false,
+      timerStatus: 'Work'
     }
   }
 
@@ -30,6 +31,7 @@ export default class Task extends Component {
     let cickle = 0;
 
     const handlerTimer = () => {
+
       if (copyState.second === 0) {
         copyState.second = 60;
         copyState.minut -= 1;
@@ -37,6 +39,7 @@ export default class Task extends Component {
 
       if (copyState.minut === 0 && copyState.second === 1 && !rest) {
         copyState.minut = 25;
+        copyState.timerStatus = 'Work';
         copyState.second = 0;
         rest = true;
         cickle += 1;
@@ -44,6 +47,7 @@ export default class Task extends Component {
 
       if (copyState.minut === 0 && copyState.second === 1 && rest) {
         rest = false;
+        copyState.timerStatus = 'Rest';
         copyState.minut = 5;
         copyState.second = 0;
         console.log('Pomidorko!');
@@ -51,7 +55,8 @@ export default class Task extends Component {
         this.props.setPomidoro(this.props.index, this.props.countPomidoro + 1);
       }
 
-      if (cickle === 4) {
+      if (cickle === 4 && !rest) {
+        copyState.timerStatus = 'Rest';
         copyState.minut = 15;
         copyState.second = 0;
         cickle = 0;
@@ -59,10 +64,11 @@ export default class Task extends Component {
         console.log('Big rest!');
       }
 
+
+
       copyState.second -= 1;
-
-
       this.setState((state, props) => copyState);
+
     }
 
     const timer = setInterval(handlerTimer, 1000)
@@ -111,7 +117,7 @@ export default class Task extends Component {
     task.name = inputs[1].value;
     task.time = inputs[2].value;
     task.description = inputs[3].value;
-    task.countPomidoro = 0;
+    task.countPomidoro = this.props.countPomidoro;
 
     this.props.editTask(this.props.index, task);
     copyState.edit = false;
@@ -120,7 +126,7 @@ export default class Task extends Component {
 
   render() {
     const { name, date, time, description, countPomidoro } = this.props;
-    const { statusTimer, minut, second, checked, edit, editDay } = this.state;
+    const { statusTimer, minut, second, checked, edit, timerStatus } = this.state;
     const [weekDay, month, day, year] = date.toString().split(' ');
     return (
       <div>
@@ -160,6 +166,7 @@ export default class Task extends Component {
               {statusTimer === 'play' ?
                 <TaskTimerWrapper>
                   <TaskTimer>{String(minut).length === 1 ? `0${minut}` : minut} : {String(second).length === 1 ? `0${second}` : second}</TaskTimer>
+                  <TaskTimerStatus>{timerStatus}</TaskTimerStatus>
                 </TaskTimerWrapper>
                 :
                 <TaskEditButtonWrapper>
@@ -215,6 +222,16 @@ const TaskWrapper = styled.div`
     cursor: pointer;
   }
   
+`;
+
+const TaskTimerStatus = styled.p`
+  font-size: 12px;
+  position: relative;
+  font-family: Roboto;
+  top: -10px;
+  left: 0px;
+  display: block;
+  letter-spacing: 1.5px;
 `;
 
 const TaskEditWrapper = styled.div`
@@ -419,9 +436,11 @@ const TaskTimerWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin: 0;
-  top: -60px;
+  top: -30px;
   height: 0px;
   position: relative;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const TaskTimer = styled.div`

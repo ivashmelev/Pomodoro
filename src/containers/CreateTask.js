@@ -113,8 +113,8 @@ class CreateTask extends Component {
           }
           <CreateTaskNavigation>
             <CreateTaskLink onClick={() => history.push({ pathname: '/tasks' })}>Tasks</CreateTaskLink>
-            <CreateTaskLink>New Task</CreateTaskLink>
-            <CreateTaskLink>About</CreateTaskLink>
+            {/* <CreateTaskLink>New Task</CreateTaskLink> */}
+            <CreateTaskLink onClick={() => history.push({ pathname: '/about' })}>About</CreateTaskLink>
           </CreateTaskNavigation>
         </CreateTaskBlock>
       </CreateTaskWrapper>

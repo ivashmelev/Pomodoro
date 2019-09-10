@@ -4,6 +4,7 @@ import history from '../helpers/history'
 import App from './App';
 import CreateTask from './CreateTask'
 import PageTasks from './PageTasks'
+import About from '../components/About'
 
 
 const wrap = Component => {
@@ -20,6 +21,7 @@ const Routing = () => {
       <Switch>
         <Route exact path='/' render={() => wrap(CreateTask)} />
         <Route exact path='/tasks' render={() => wrap(PageTasks)} />
+        <Route exact path='/about' render={() => wrap(About)} />
       </Switch>
     </Router>
   )

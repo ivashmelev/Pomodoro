@@ -14,24 +14,28 @@ class PageTasks extends Component {
     return (
       <PageTasksWrapper>
         <TaskWrapper>
-          {tasks.map((task, index) =>
-            <Task
-              key={index}
-              index={index}
-              name={task.name}
-              date={task.date}
-              time={task.time}
-              description={task.description}
-              countPomidoro={task.countPomidoro}
-              setPomidoro={setPomidoro}
-              deleteTask={deleteTask}
-              editTask={editTask}
-            />
-          )}
+          {tasks.length > 0 ?
+            tasks.map((task, index) =>
+              <Task
+                key={index}
+                index={index}
+                name={task.name}
+                date={task.date}
+                time={task.time}
+                description={task.description}
+                countPomidoro={task.countPomidoro}
+                setPomidoro={setPomidoro}
+                deleteTask={deleteTask}
+                editTask={editTask}
+              />
+            )
+            :
+            <PageTaskAlert>Нет дел :(</PageTaskAlert>
+          }
         </TaskWrapper>
         <PageTaskNavigation>
           <PageTaskLink onClick={() => history.push({ pathname: '/' })}>New Task</PageTaskLink>
-          <PageTaskLink>About</PageTaskLink>
+          <PageTaskLink onClick={() => history.push({ pathname: '/about' })}>About</PageTaskLink>
         </PageTaskNavigation>
       </PageTasksWrapper>
     )
@@ -59,6 +63,18 @@ const PageTasksWrapper = styled.div`
   align-items: center;
   flex-direction: column;
 `;
+
+const PageTaskAlert = styled.div`
+  font-size: 68px;
+  font-family: Roboto;
+  letter-spacing: 7px;
+  -webkit-text-stroke: 6px #d8e1e896;
+  -webkit-text-fill-color: #c2c1c196;
+  height: 500px;
+  display: flex;
+  align-items: center;
+`;
+
 
 const TaskWrapper = styled.div`
   display: flex;
