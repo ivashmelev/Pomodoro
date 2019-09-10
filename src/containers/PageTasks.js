@@ -90,7 +90,7 @@ const PageTaskNavigation = styled.div`
   justify-content: space-between;
   width: 50%;
 
-  @media ${response.mobileS} {
+  @media ${response.tablet} {
     align-items: center;
   }
 `;

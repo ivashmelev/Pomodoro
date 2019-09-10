@@ -223,7 +223,7 @@ const TaskWrapper = styled.div`
     cursor: pointer;
   }
 
-  @media ${response.mobile} {
+  @media ${response.tablet} {
     margin-left: 0; 
   }
   
@@ -328,7 +328,7 @@ const TaskEditButtonWrapper = styled.div`
   top: -60px;
   left: 180px;
 
-  @media ${response.mobile} {
+  @media ${response.tablet} {
     width: 10px;
   }
 `;

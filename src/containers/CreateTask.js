@@ -179,7 +179,7 @@ const CreateTaskWrapper = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  @media ${response.mobile} {
+  @media ${response.tablet} {
     padding: 20px;
   }
 `;
@@ -319,7 +319,8 @@ const CreateTaskText = styled.p`
 
 const CreateTaskRichBox = styled.textarea`
 /*border-active: rgb(169, 169, 169); */
-  width: 450px;
+  max-width: 450px;
+  width: 100%;
   height: 300px;
   font-size: 18px;
   outline: none;
