@@ -3,6 +3,10 @@ import styled from 'styled-components'
 import PomidoroImg from '../assets/img/tomato.svg'
 import PomidoroTimerStartImg from '../assets/img/play-button.svg'
 import PomidoroTimerPauseImg from '../assets/img/pause.svg'
+import EditButtonImg from '../assets/img/edit.svg'
+import CheckedImg from '../assets/img/check-mark.svg'
+import Calendar from 'react-calendar'
+import EditOkImg from '../assets/img/diploma.svg'
 
 
 export default class Task extends Component {
@@ -12,6 +16,10 @@ export default class Task extends Component {
       statusTimer: 'pause',
       minut: 25,
       second: 0,
+      timer: '',
+      checked: false,
+      edit: false,
+      editDate: false
     }
   }
 
@@ -55,66 +63,134 @@ export default class Task extends Component {
 
 
       this.setState((state, props) => copyState);
-
-
-      const stopTimer = () => {
-        clearInterval(timer);
-      }
     }
 
     const timer = setInterval(handlerTimer, 1000)
+
+    copyState.timer = timer;
+    console.log(copyState);
+    this.setState((state, props) => copyState);
+
   }
 
+  stopTimer() {
+    const copyState = { ...this.state };
+    copyState.statusTimer = 'pause';
+    clearInterval(copyState.timer);
+    this.setState((state, props) => copyState);
+  }
 
+  checkedTask(e) {
+    const copyState = { ...this.state };
+    copyState.checked = !copyState.checked;
+    this.setState((state, props) => copyState);
+    const card = e.target.parentElement.parentElement;
+    setTimeout(() => {
+      card.style.opacity = 0;
+      setTimeout(() => {
+        this.props.deleteTask(this.props.index);
+        card.style.opacity = 1;
+        copyState.checked = !copyState.checked;
+        this.setState((state, props) => copyState);
+      }, 2500);
+    }, 2000);
+  }
+
+  editTask(e) {
+    const copyState = { ...this.state }
+    const card = e.target.parentElement.parentElement;
+    const inputs = card.querySelectorAll('.react-calendar, input, textarea');
+    const task = {};
+    if (!copyState.editDate) {
+      task.date = this.props.date;
+    } else {
+      const [weekDay, month, day, year] = copyState.editDate.toString().split(' ');
+      task.date = `${weekDay} ${month} ${day} ${year}`;
+    }
+
+    task.name = inputs[1].value;
+    task.time = inputs[2].value;
+    task.description = inputs[3].value;
+    task.countPomidoro = 0;
+
+    this.props.editTask(this.props.index, task);
+    copyState.edit = false;
+    this.setState((state, props) => copyState);
+  }
 
   render() {
     const { name, date, time, description, countPomidoro } = this.props;
-    const { statusTimer, minut, second } = this.state;
+    const { statusTimer, minut, second, checked, edit, editDay } = this.state;
     const [weekDay, month, day, year] = date.toString().split(' ');
     return (
-      <TaskWrapper>
-        <TaskHeaderWrapper>
-          <TaskDateWrapper>
-            <TaskDateDay>
-              {day}
-            </TaskDateDay>
-            <TaskDateMonthYearWrapper>
-              <TaskDateMonth>{month.toUpperCase()}</TaskDateMonth>
-              <TaskDateYear>{year}</TaskDateYear>
-            </TaskDateMonthYearWrapper>
-          </TaskDateWrapper>
-          <TaskWeekDay>{weekDay}</TaskWeekDay>
-        </TaskHeaderWrapper>
-        <TaskMiddleWrapper>
-          {statusTimer === 'play' ?
-            <TaskTimerWrapper>
-              <TaskTimer>{String(minut).length === 1 ? `0${minut}` : minut} : {String(second).length === 1 ? `0${second}` : second}</TaskTimer>
-            </TaskTimerWrapper>
-            : null
-          }
-          <TaskNameTimeWrapper>
-            <TaskName>{name}</TaskName>
-            <TaskTime>{time}</TaskTime>
-          </TaskNameTimeWrapper>
-          <TaskDescriptionWrapper>
-            <TaskDescriptionTitle>Description</TaskDescriptionTitle>
-            <TaskDescription>{description}</TaskDescription>
-          </TaskDescriptionWrapper>
-        </TaskMiddleWrapper>
-        <TaskFooterWrapper>
-          <TaskPomidoroImgNumberWrapper>
-            <TaskPomidoroImg src={PomidoroImg} />
-            <TaskPomidoroNumber> x {countPomidoro}</TaskPomidoroNumber>
-          </TaskPomidoroImgNumberWrapper>
-          <TaskPomidoroTimerWrapper>
-            {statusTimer === 'pause' ?
-              <TaskPomidoroTimerImg src={PomidoroTimerStartImg} onClick={() => this.startTimer()} /> :
-              statusTimer === 'play' ?
-                <TaskPomidoroTimerImg src={PomidoroTimerPauseImg} onClick={() => this.setState({ statusTimer: 'pause' })} /> : null
-            }
-          </TaskPomidoroTimerWrapper>
-        </TaskFooterWrapper>
-      </TaskWrapper >
+      <div>
+        {edit ?
+          <TaskEditWrapper>
+            <TaskEditForm>
+              <Calendar value={new Date(date)} onClickDay={(e) => this.setState({ editDate: e })} />
+              <TaskInput placeholder="Name of Task" defaultValue={name} />
+              <TaskInput placeholder="Time" defaultValue={time} />
+              <TaskRichBox placeholder="Description of Task" defaultValue={description}></TaskRichBox>
+            </TaskEditForm>
+            <TaskEditOkWrapper>
+              <TaskEditOk src={EditOkImg} onClick={(e) => this.editTask(e)} />
+            </TaskEditOkWrapper>
+          </TaskEditWrapper>
+          :
+          <TaskWrapper>
+            <TaskHeaderWrapper>
+              <TaskCheckedWrapper onClick={(e) => this.checkedTask(e)}>
+                {checked ?
+                  <TaskCheckedImg src={CheckedImg} />
+                  : null
+                }
+              </TaskCheckedWrapper>
+              <TaskDateWrapper>
+                <TaskDateDay>
+                  {day}
+                </TaskDateDay>
+                <TaskDateMonthYearWrapper>
+                  <TaskDateMonth>{month.toUpperCase()}</TaskDateMonth>
+                  <TaskDateYear>{year}</TaskDateYear>
+                </TaskDateMonthYearWrapper>
+              </TaskDateWrapper>
+              <TaskWeekDay>{weekDay}</TaskWeekDay>
+            </TaskHeaderWrapper>
+            <TaskMiddleWrapper>
+              {statusTimer === 'play' ?
+                <TaskTimerWrapper>
+                  <TaskTimer>{String(minut).length === 1 ? `0${minut}` : minut} : {String(second).length === 1 ? `0${second}` : second}</TaskTimer>
+                </TaskTimerWrapper>
+                :
+                <TaskEditButtonWrapper>
+                  <TaskEditButton onClick={() => this.setState({ edit: !edit })} src={EditButtonImg} />
+                </TaskEditButtonWrapper>
+              }
+              <TaskNameTimeWrapper>
+                <TaskName>{name}</TaskName>
+                <TaskTime>{time}</TaskTime>
+              </TaskNameTimeWrapper>
+              <TaskDescriptionWrapper>
+                <TaskDescriptionTitle>Description</TaskDescriptionTitle>
+                <TaskDescription>{description}</TaskDescription>
+              </TaskDescriptionWrapper>
+            </TaskMiddleWrapper>
+            <TaskFooterWrapper>
+              <TaskPomidoroImgNumberWrapper>
+                <TaskPomidoroImg src={PomidoroImg} />
+                <TaskPomidoroNumber> x {countPomidoro}</TaskPomidoroNumber>
+              </TaskPomidoroImgNumberWrapper>
+              <TaskPomidoroTimerWrapper>
+                {statusTimer === 'pause' ?
+                  <TaskPomidoroTimerImg src={PomidoroTimerStartImg} onClick={() => this.startTimer()} /> :
+                  statusTimer === 'play' ?
+                    <TaskPomidoroTimerImg src={PomidoroTimerPauseImg} onClick={() => this.stopTimer()} /> : null
+                }
+              </TaskPomidoroTimerWrapper>
+            </TaskFooterWrapper>
+          </TaskWrapper >
+        }
+      </div>
     )
   }
 }
@@ -123,7 +199,7 @@ export default class Task extends Component {
 const TaskWrapper = styled.div`
   max-width: 287.84px;
   width: 100%;
-  height: 400px;
+  min-height: 400px;
   box-shadow: 1px 2px 3px 2px rgba(0,0,0,0.25);
   padding: 40px;
   box-sizing: border-box;
@@ -132,16 +208,110 @@ const TaskWrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   margin: 40px;
+  opacity: 1;
+  transition: opacity 3s cubic-bezier(0.075, 0.82, 0.165, 1);
 
   :hover{
     cursor: pointer;
   }
   
 `;
+
+const TaskEditWrapper = styled.div`
+  max-width: 310.84px;
+  width: 100%;
+  min-height: 400px;
+  box-shadow: 1px 2px 3px 2px rgba(0,0,0,0.25);
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 40px;
+  opacity: 1;
+  transition: opacity 2.5s cubic-bezier(0.075,0.82,0.165,1);
+`
+
+const TaskEditForm = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const TaskEditOkWrapper = styled.div`
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+`;
+
+const TaskEditOk = styled.img`
+  width: 40px;
+
+  :hover{
+    cursor: pointer;
+  }
+`;
+
+const TaskInput = styled.input`
+  height: 35px;
+  margin-top: 20px;
+  padding: 5px 10px;
+  font-family: Roboto Bold;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid #c2c1c196;
+  box-sizing: border-box;
+  letter-spacing: 1.2px;
+
+`;
+
+const TaskRichBox = styled.textarea`
+  resize: none;
+  height: 150px;
+  margin-top: 20px;
+  padding: 5px 10px;
+  font-family: Roboto Bold;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid #c2c1c196;
+  box-sizing: border-box;
+  letter-spacing: 1.2px;
+`;
+
 const TaskHeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
+const TaskCheckedWrapper = styled.div`
+  width: 33px;
+  border: 1.5px solid;
+  border-radius: 5px;
+  height: 33px;
+`;
+
+const TaskCheckedImg = styled.img`
+  width: 30px;
+  height: 30px;
+  transform: scale(2);
+  position: relative;
+  top: -10px;
+  left: 10px;
+`;
+
+
+const TaskEditButtonWrapper = styled.div`
+  height: 0;
+  position: relative;
+  top: -60px;
+  left: 180px;
+`;
+
+const TaskEditButton = styled.img`
+  width: 33px;
+  height: 33px;
+`;
+
 const TaskDateWrapper = styled.div`
   display: flex;
 `;

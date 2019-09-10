@@ -4,11 +4,13 @@ import styled from 'styled-components'
 import Task from '../components/Task'
 import { connect } from 'react-redux'
 import { setPomidoro } from '../actions/timerAction'
+import { deleteTask } from '../actions/taskAction'
+import { editTask } from '../actions/taskAction'
 
 
 class PageTasks extends Component {
   render() {
-    const { tasks, setPomidoroAction } = this.props;
+    const { tasks, setPomidoro, deleteTask, editTask } = this.props;
     return (
       <PageTasksWrapper>
         <TaskWrapper>
@@ -22,6 +24,8 @@ class PageTasks extends Component {
               description={task.description}
               countPomidoro={task.countPomidoro}
               setPomidoro={setPomidoro}
+              deleteTask={deleteTask}
+              editTask={editTask}
             />
           )}
         </TaskWrapper>
@@ -39,7 +43,9 @@ const mapStateToProps = store => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setPomidoro: (index, count) => dispatch(setPomidoro(index, count))
+  setPomidoro: (index, count) => dispatch(setPomidoro(index, count)),
+  deleteTask: index => dispatch(deleteTask(index)),
+  editTask: (index, task) => dispatch(editTask(index, task))
 });
 
 export default connect(

@@ -18,15 +18,30 @@ const initialState = [
 
 export const taskReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'SET_POMIDORO':
+    case 'SET_POMIDORO': {
       const copyState = [...state];
       copyState[action.index] = { ...copyState[action.index], countPomidoro: action.payload };
       console.log(state);
       console.log(copyState);
       return copyState;
+    }
 
-    case 'ADD_TASK':
+    case 'ADD_TASK': {
       return [...state, action.payload];
+    }
+
+    case 'DELETE_TASK': {
+      const copyState = [...state];
+      copyState.splice(action.payload, 1);
+      return copyState;
+    }
+
+    case 'EDIT_TASK': {
+      const copyState = [...state];
+      copyState[action.index] = action.payload;
+      return copyState;
+    }
+
 
     default:
       return state
