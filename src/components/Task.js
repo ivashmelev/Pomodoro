@@ -15,8 +15,8 @@ export default class Task extends Component {
     super(props);
     this.state = {
       statusTimer: 'pause',
-      minut: 25,
-      second: 0,
+      minut: 24,
+      second: 59,
       timer: '',
       checked: false,
       edit: false,
@@ -34,14 +34,16 @@ export default class Task extends Component {
     const handlerTimer = () => {
 
       if (copyState.second === 0) {
-        copyState.second = 60;
-        copyState.minut -= 1;
+        copyState.second = 59;
+        if (copyState.minut !== 0) {
+          copyState.minut -= 1;
+        }
       }
 
       if (copyState.minut === 0 && copyState.second === 1 && !rest) {
-        copyState.minut = 25;
+        copyState.minut = 24;
         copyState.timerStatus = 'Work';
-        copyState.second = 0;
+        copyState.second = 59;
         rest = true;
         cickle += 1;
       }
@@ -49,8 +51,8 @@ export default class Task extends Component {
       if (copyState.minut === 0 && copyState.second === 1 && rest) {
         rest = false;
         copyState.timerStatus = 'Rest';
-        copyState.minut = 5;
-        copyState.second = 0;
+        copyState.minut = 4;
+        copyState.second = 59;
         console.log('Pomidorko!');
         console.log(this.props.index, 'index');
         this.props.setPomidoro(this.props.index, this.props.countPomidoro + 1);
@@ -58,13 +60,12 @@ export default class Task extends Component {
 
       if (cickle === 4 && !rest) {
         copyState.timerStatus = 'Rest';
-        copyState.minut = 15;
-        copyState.second = 0;
+        copyState.minut = 14;
+        copyState.second = 59;
         cickle = 0;
         rest = false;
         console.log('Big rest!');
       }
-
 
 
       copyState.second -= 1;
